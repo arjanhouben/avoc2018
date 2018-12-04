@@ -8,24 +8,35 @@ int main( int argc, char **argv )
 	try
 	{
 		if ( argc < 2 ) throw std::runtime_error( "please supply input file" );
-		std::map< int64_t, int > frequency_count;
-		int64_t total = 0;
-		++frequency_count[ total ];
+		int twice = 0, thrice = 0;
 		std::string buf;
-		for ( ;; )
+		const auto filename = argv[ 1 ];
+		for ( std::ifstream input( filename ); std::getline( input, buf ); )
 		{
-			const auto filename = argv[ 1 ];
-			for ( std::ifstream input( filename ); std::getline( input, buf ); )
+			std::map< std::string::value_type, int > frequency_count;
+			for ( auto c : buf )
 			{
-				total += std::stoi( buf );
-				if ( ++frequency_count[ total ] > 1 )
+				++frequency_count[ c ];
+			}
+			int twice_add = 1, thrice_add = 1;
+			for ( auto &key_value : frequency_count )
+			{
+				switch ( key_value.second )
 				{
-					std::cout << total << std::endl;
-					return 0;
+					case 2:
+						twice += twice_add;
+						twice_add = 0;
+						break;
+					case 3:
+						thrice += thrice_add;
+						thrice_add = 0;
+						break;
+					default:
+						break;
 				}
 			}
 		}
-		std::cout << total << std::endl;
+		std::cout << twice * thrice << std::endl;
 	}
 	catch( const std::exception &err )
 	{
